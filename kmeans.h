@@ -1,0 +1,8 @@
+//
+// Created by nilsonneto on 1/14/16.
+//
+
+#ifndef PARALLELCLUSTERING_KMEANS_H
+#define PARALLELCLUSTERING_KMEANS_H
+
+#endif //PARALLELCLUSTERING_KMEANS_H
