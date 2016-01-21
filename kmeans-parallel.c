@@ -13,10 +13,13 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 #include <sys/time.h>
+#include <math.h>
+#include <omp.h>
 
 #include "kmeans.h"
+
+int numCores;
 
 /*
  * Generate tiny random double
@@ -182,62 +185,104 @@ void print_eps(point pts, long len, point cent, long n_cluster) {
 /*
  * Lloyd's algorithm for resolving the k-means problem
  */
-point lloyd(point pts, long len, long n_cluster) {
+point lloyd(point pts, long len, long numMeans) {
+    struct timeval start, stop;
     int i, j, min_i;
-    int changed;
+    long changed;
+    double count1 = 0, count2 = 0, count3 = 0, count4 = 0;
 
-    point cent = malloc(sizeof(point_t) * n_cluster), p, c;
+    point means = malloc(sizeof(point_t) * numMeans), p;
+    point_t c;
 
     /* assign init grouping randomly */
     p = pts;
     for (j = 0; j < len; j++, p++) {
-        p->group = j % (int) n_cluster;
+        p->group = j % (int) numMeans;
     }
 
     /* or call k++ init */
-    // kpp(pts, len, cent, n_cluster);
+    // kpp(pts, len, means, numMeans);
 
     do {
         /* group element for centroids are used as counters */
-        c = cent;
-        for (i = 0; i < n_cluster; i++, c++) {
-            c->group = 0;
-            c->x = c->y = 0;
+        /*
+         * Go through each mean and clear it
+         */
+        gettimeofday(&start, NULL);
+        c = *means;
+        for (i = 0; i < numMeans; i++) {
+            c.group = 0;
+            c.x = c.y = 0;
+            c = means[i];
         }
+        gettimeofday(&stop, NULL);
+        count1 += getTempo(start, stop);
 
+        /*
+         * Go through each point, go to it's assigned mean
+         * Increase mean group counter
+         * Add to x and y of the mean, the x and y of the point
+         */
+        gettimeofday(&start, NULL);
+
+        int grp;
         p = pts;
-        for (j = 0; j < len; j++, p++) {
-            c = cent + p->group;
-            c->group++;
-            c->x += p->x;
-            c->y += p->y;
+        grp = p->group;
+        #pragma omp parallel for num_threads(numCores) default(none) private(j, p, c, grp) shared(len, means, pts)
+        for (j = 0; j < len; j++) {
+            c = means[grp];
+            c.group++;
+            c.x += p->x;
+            c.y += p->y;
+            p++;
+            grp = p->group;
         }
 
-        c = cent;
-        for (i = 0; i < n_cluster; i++, c++) {
-            c->x /= c->group;
-            c->y /= c->group;
-        }
+        gettimeofday(&stop, NULL);
+        count2 += getTempo(start, stop);
 
+        /*
+         * Go through each mean and divide the position my the number of assignees
+         * This will reposition the mean based on all of their assignees
+         */
+        gettimeofday(&start, NULL);
+        c = *means;
+        for (i = 0; i < numMeans; i++) {
+            c.x /= c.group;
+            c.y /= c.group;
+            c = means[i];
+        }
+        gettimeofday(&stop, NULL);
+        count3 += getTempo(start, stop);
+
+
+        /*
+         * Go through each point and find its nearest mean
+         * If different that previous, change it and increase counter
+         */
+        gettimeofday(&start, NULL);
         changed = 0;
-
-        /* find closest centroid of each point */
         p = pts;
-        for (j = 0; j < len; j++, p++) {
-            min_i = nearest(p, cent, n_cluster, 0);
+        for (j = 0; j < len; j++) {
+            min_i = nearest(p, means, numMeans, 0);
             if (min_i != p->group) {
                 changed++;
                 p->group = min_i;
             }
+            p++;
         }
+        gettimeofday(&stop, NULL);
+        count4 += getTempo(start, stop);
     } while (changed > (len >> 10)); /* stop when 99.9% of points are good */
+    // printf("%lf // %lf // %lf // %lf \n", count1, count2, count3, count4);
 
-    c = cent;
-    for (i = 0; i < n_cluster; i++, c++) {
-        c->group = i;
+    c = *means;
+    for (i = 0; i < numMeans; i++) {
+        c.group = i;
+        c = means[i+1];
     }
 
-    return cent;
+    return means;
 }
 
 double getTempo(struct timeval start, struct timeval stop){
@@ -256,6 +301,7 @@ int main(int argc, char *argv[]) {
     long numPoints = strtol(argv[1], NULL, 10);
     long radius = strtol(argv[2], NULL, 10);
     long numMeans = strtol(argv[3], NULL, 10);
+    numCores = 4;
 
     gettimeofday(&start, NULL);
     point v = gen_xy(numPoints, radius, numMeans);
@@ -263,7 +309,6 @@ int main(int argc, char *argv[]) {
     // fprintf(stdout, "Generation time: ");
     // tempo(start, stop);
 
-    // lloyd(v, numPoints, numMeans);
     gettimeofday(&start, NULL);
     point c = lloyd(v, numPoints, numMeans);
     gettimeofday(&stop, NULL);

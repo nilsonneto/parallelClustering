@@ -1,13 +1,25 @@
 cmake_minimum_required(VERSION 3.3)
 project(parallelClustering)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+find_package(OpenMP)
+if (OPENMP_FOUND)
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 ${OpenMP_CXX_FLAGS}")
+else()
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+endif()
 
-set(SOURCE_FILES main.c em.c kmeans.c)
-set(SOURCE_K main.c em.c kmeans.c)
+set(SOURCE_FILES main.c em.c kmeans.c kmeans-parallel.c kmeans-gen.h)
+set(SOURCE_K kmeans.c kmeans-gen.h)
+set(SOURCE_KP kmeans-parallel.c kmeans-gen.h)
+set(SOURCE_EM em.c)
 
 add_executable(parallelClustering ${SOURCE_FILES})
 add_executable(kmeans ${SOURCE_K})
+add_executable(kmeansp ${SOURCE_KP})
+add_executable(em ${SOURCE_EM})
 
 target_link_libraries(parallelClustering pthread m)
 target_link_libraries(kmeans pthread m)
+target_link_libraries(kmeansp pthread m)
+target_link_libraries(em pthread m)
