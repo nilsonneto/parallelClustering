@@ -7,7 +7,7 @@ TARGET = kmeansp kmeans
 
 SOURCE_FILES = main.c em.c kmeans.c kmeans-gen.h
 SOURCE_K = kmeans.c
-SOURCE_KP = kmeans-parallel.c kmeans-gen.h
+SOURCE_KP = kmeans-parallel.c
 
 ALL: $(TARGET)
 

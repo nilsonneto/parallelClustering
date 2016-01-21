@@ -13,8 +13,8 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/time.h>
 #include <math.h>
+#include <sys/time.h>
 #include <omp.h>
 
 #include "kmeans.h"
@@ -187,12 +187,13 @@ void print_eps(point pts, long len, point cent, long n_cluster) {
  */
 point lloyd(point pts, long len, long numMeans) {
     struct timeval start, stop;
-    int i, j, min_i;
+    int i, j, k, min_i;
     long changed;
     double count1 = 0, count2 = 0, count3 = 0, count4 = 0;
 
-    point means = malloc(sizeof(point_t) * numMeans), p;
-    point *c;
+    point means = malloc(sizeof(point_t) * numMeans);
+    point p;
+    point c;
 
     /* assign init grouping randomly */
     p = pts;
@@ -211,8 +212,9 @@ point lloyd(point pts, long len, long numMeans) {
         gettimeofday(&start, NULL);
         c = means;
         for (i = 0; i < numMeans; i++) {
-            c[i]->group = 0;
-            c[i]->x = c[i]->y = 0;
+            c->group = 0;
+            c->x = c->y = 0;
+            c++;
         }
         gettimeofday(&stop, NULL);
         count1 += getTempo(start, stop);
@@ -225,12 +227,16 @@ point lloyd(point pts, long len, long numMeans) {
         gettimeofday(&start, NULL);
 
         p = pts;
-        //#pragma omp parallel for num_threads(numCores) default(none) private(j, p, c) shared(len, means, pts)
+        // #pragma omp parallel for num_threads(numCores) default(none) private(j, k, p, c) shared(len, means, pts)
         for (j = 0; j < len; j++) {
-            c[j]->group++;
-            c[j]->x += p->x;
-            c[j]->y += p->y;
-            p++;
+            p = pts;
+            if (j > 0)
+                for (k = 0; k < j; k++)
+                    p++;
+            c = means + p->group;
+            c->group++;
+            c->x += p->x;
+            c->y += p->y;
         }
 
         gettimeofday(&stop, NULL);
@@ -243,8 +249,9 @@ point lloyd(point pts, long len, long numMeans) {
         gettimeofday(&start, NULL);
         c = means;
         for (i = 0; i < numMeans; i++) {
-            c[i]->x /= c[i]->group;
-            c[i]->y /= c[i]->group;
+            c->x /= c->group;
+            c->y /= c->group;
+            c++;
         }
         gettimeofday(&stop, NULL);
         count3 += getTempo(start, stop);
@@ -270,8 +277,10 @@ point lloyd(point pts, long len, long numMeans) {
     } while (changed > (len >> 10)); /* stop when 99.9% of points are good */
     printf("%lf // %lf // %lf // %lf \n", count1, count2, count3, count4);
 
+    c = means;
     for (i = 0; i < numMeans; i++) {
-        c[i]->group = i;
+        c->group = i;
+        c++;
     }
 
     return means;

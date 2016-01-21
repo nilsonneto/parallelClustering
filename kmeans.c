@@ -263,7 +263,6 @@ int main(int argc, char *argv[]) {
     fprintf(stdout, "Generation time: ");
     tempo(start, stop);
 
-    // lloyd(v, numPoints, numMeans);
     gettimeofday(&start, NULL);
     point c = lloyd(v, numPoints, numMeans);
     gettimeofday(&stop, NULL);
