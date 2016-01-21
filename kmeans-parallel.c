@@ -192,7 +192,7 @@ point lloyd(point pts, long len, long numMeans) {
     double count1 = 0, count2 = 0, count3 = 0, count4 = 0;
 
     point means = malloc(sizeof(point_t) * numMeans), p;
-    point_t c;
+    point *c;
 
     /* assign init grouping randomly */
     p = pts;
@@ -209,11 +209,10 @@ point lloyd(point pts, long len, long numMeans) {
          * Go through each mean and clear it
          */
         gettimeofday(&start, NULL);
-        c = *means;
+        c = means;
         for (i = 0; i < numMeans; i++) {
-            c.group = 0;
-            c.x = c.y = 0;
-            c = means[i];
+            c[i]->group = 0;
+            c[i]->x = c[i]->y = 0;
         }
         gettimeofday(&stop, NULL);
         count1 += getTempo(start, stop);
@@ -225,17 +224,13 @@ point lloyd(point pts, long len, long numMeans) {
          */
         gettimeofday(&start, NULL);
 
-        int grp;
         p = pts;
-        grp = p->group;
-        #pragma omp parallel for num_threads(numCores) default(none) private(j, p, c, grp) shared(len, means, pts)
+        //#pragma omp parallel for num_threads(numCores) default(none) private(j, p, c) shared(len, means, pts)
         for (j = 0; j < len; j++) {
-            c = means[grp];
-            c.group++;
-            c.x += p->x;
-            c.y += p->y;
+            c[j]->group++;
+            c[j]->x += p->x;
+            c[j]->y += p->y;
             p++;
-            grp = p->group;
         }
 
         gettimeofday(&stop, NULL);
@@ -246,11 +241,10 @@ point lloyd(point pts, long len, long numMeans) {
          * This will reposition the mean based on all of their assignees
          */
         gettimeofday(&start, NULL);
-        c = *means;
+        c = means;
         for (i = 0; i < numMeans; i++) {
-            c.x /= c.group;
-            c.y /= c.group;
-            c = means[i];
+            c[i]->x /= c[i]->group;
+            c[i]->y /= c[i]->group;
         }
         gettimeofday(&stop, NULL);
         count3 += getTempo(start, stop);
@@ -274,12 +268,10 @@ point lloyd(point pts, long len, long numMeans) {
         gettimeofday(&stop, NULL);
         count4 += getTempo(start, stop);
     } while (changed > (len >> 10)); /* stop when 99.9% of points are good */
-    // printf("%lf // %lf // %lf // %lf \n", count1, count2, count3, count4);
+    printf("%lf // %lf // %lf // %lf \n", count1, count2, count3, count4);
 
-    c = *means;
     for (i = 0; i < numMeans; i++) {
-        c.group = i;
-        c = means[i+1];
+        c[i]->group = i;
     }
 
     return means;
@@ -306,16 +298,16 @@ int main(int argc, char *argv[]) {
     gettimeofday(&start, NULL);
     point v = gen_xy(numPoints, radius, numMeans);
     gettimeofday(&stop, NULL);
-    // fprintf(stdout, "Generation time: ");
-    // tempo(start, stop);
+    fprintf(stdout, "Generation time: ");
+    tempo(start, stop);
 
     gettimeofday(&start, NULL);
     point c = lloyd(v, numPoints, numMeans);
     gettimeofday(&stop, NULL);
-    // fprintf(stdout, "Classification time: ");
-    // tempo(start, stop);
+    fprintf(stdout, "Classification time: ");
+    tempo(start, stop);
 
-    print_eps(v, numPoints, c, numMeans);
+    // print_eps(v, numPoints, c, numMeans);
 
     return 0;
 }

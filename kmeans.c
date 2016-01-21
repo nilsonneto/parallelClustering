@@ -260,17 +260,17 @@ int main(int argc, char *argv[]) {
     gettimeofday(&start, NULL);
     point v = gen_xy(numPoints, radius, numMeans);
     gettimeofday(&stop, NULL);
-    // fprintf(stdout, "Generation time: ");
-    // tempo(start, stop);
+    fprintf(stdout, "Generation time: ");
+    tempo(start, stop);
 
     // lloyd(v, numPoints, numMeans);
     gettimeofday(&start, NULL);
     point c = lloyd(v, numPoints, numMeans);
     gettimeofday(&stop, NULL);
-    // fprintf(stdout, "Classification time: ");
-    // tempo(start, stop);
+    fprintf(stdout, "Classification time: ");
+    tempo(start, stop);
 
-    print_eps(v, numPoints, c, numMeans);
+    // print_eps(v, numPoints, c, numMeans);
 
     return 0;
 }
