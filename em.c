@@ -3,7 +3,7 @@
  *
  * Expectation-Maximization Algorithm
  * How to tackle:
- *     
+ *
  *
  *
  *
