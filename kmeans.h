@@ -7,7 +7,6 @@
 
 
 typedef struct {
-    int index;
     double x, y;
     int group;
 } point_t, *point;

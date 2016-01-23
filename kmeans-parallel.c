@@ -13,14 +13,11 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/time.h>
 #include <math.h>
+#include <sys/time.h>
 #include <omp.h>
 
-typedef struct _point_t{
-    double x, y;
-    int group;
-} point_t;
+#include "kmeans.h"
 
 int numCores;
 
@@ -35,45 +32,48 @@ double randf(double m) {
  * Creates # (count) within the radius (radius)
  * Returns a vector with all points
  */
-void gen_xy(point_t *points, long count, double radius, long numMeans) {
-    int i;
+point gen_xy(long count, double radius, long numMeans) {
     double ang, r;
+    point p;
+    point pt = malloc(sizeof(point_t) * count);
 
     /* note: this is not a uniform 2-d distribution */
-    for (i = 0; i < count; i++) {
+    for (p = pt + count; p-- > pt;) {
         ang = randf(2 * M_PI);
         r = randf(radius);
-        points[i].x = r * cos(ang);
-        points[i].y = r * sin(ang);
-        points[i].group = (int) numMeans;
+        p->x = r * cos(ang);
+        p->y = r * sin(ang);
+        p->group = (int) numMeans;
     }
+
+    return pt;
 }
 
 /*
  * Returns the distance between 2 points
  */
-double dist2(double ax, double ay, double bx, double by) {
+double dist2(point a, point b) {
     double x, y;
-    x = ax - bx;
-    y = ay - by;
+    x = a->x - b->x;
+    y = a->y - b->y;
     return x*x + y*y;
 }
 
 /*
  * Assigns the
  */
-int nearest(point_t *points, point_t *means, long n_cluster, double *d2) {
-    int i, min_i;
-    double dist, minDist = 0;
+int nearest(point pt, point cent, long n_cluster, double *d2) {
+    int i, min_i, ret = 0;
+    double dist, minDist;
 
     for (i = 0; i < n_cluster; i++) {
         minDist = HUGE_VAL;
-        min_i = points[i].group;
+        min_i = pt->group;
         /*
          * For each mean/cluster, find closest to the point
          */
         for (i = 0; i < n_cluster; i++) {
-            dist = dist2(means[i].x, means[i].y, points[i].x, points[i].y);
+            dist = dist2((cent+i), pt);
             if (minDist > dist) {
                 minDist = dist;
                 min_i = i;
@@ -83,18 +83,23 @@ int nearest(point_t *points, point_t *means, long n_cluster, double *d2) {
     if (d2)
         *d2 = minDist;
 
-    return min_i;
+    if (min_i != pt->group) {
+        pt->group = min_i;
+        ret = 1;
+    }
+
+    return ret;
 }
 
 /*
  * K++ solution to initialize the variables differently from Lloyd's random approach
- *
-void kpp(point_t pts, int len, point_t *cent, int n_cent) {
+ */
+void kpp(point pts, int len, point cent, int n_cent) {
     int i, j;
     int n_cluster;
     double sum, *d = malloc(sizeof(double) * len);
 
-    point_t p, c;
+    point p, c;
     cent[0] = pts[ rand() % len ];
     for (n_cluster = 1; n_cluster < n_cent; n_cluster++) {
         sum = 0;
@@ -118,11 +123,10 @@ void kpp(point_t pts, int len, point_t *cent, int n_cent) {
 /*
  *
  */
-void print_eps(point_t *points, long len, point_t *means, long n_cluster) {
+void print_eps(point pts, long len, point cent, long n_cluster) {
 #	define W 400
 #	define H 400
     int i, j;
-
     double min_x, max_x, min_y, max_y, scale, cx, cy;
     double *colors = malloc(sizeof(double) * n_cluster * 3);
 
@@ -139,17 +143,17 @@ void print_eps(point_t *points, long len, point_t *means, long n_cluster) {
     min_x = min_y = HUGE_VAL;
     max_x = max_y = -(HUGE_VAL);
     for (j = 0; j < len; j++) {
-        if (max_x < points[j].x)
-            max_x = points[j].x;
+        if (max_x < (pts+j)->x)
+            max_x = (pts+j)->x;
 
-        if (min_x > points[j].x)
-            min_x = points[j].x;
+        if (min_x > (pts+j)->x)
+            min_x = (pts+j)->x;
 
-        if (max_y < points[j].y)
-            max_y = points[j].y;
+        if (max_y < (pts+j)->y)
+            max_y = (pts+j)->y;
 
-        if (min_y > points[j].y)
-            min_y = points[j].y;
+        if (min_y > (pts+j)->y)
+            min_y = (pts+j)->y;
     }
 
     scale = W / (max_x - min_x);
@@ -164,19 +168,18 @@ void print_eps(point_t *points, long len, point_t *means, long n_cluster) {
                     "	gsave 1 setgray fill grestore gsave 3 setlinewidth"
                     " 1 setgray stroke grestore 0 setgray stroke }def\n"
     );
-
     for (i = 0; i < n_cluster; i++) {
         printf("%g %g %g setrgbcolor\n",
                colors[3*i], colors[3*i + 1], colors[3*i + 2]);
         for (j = 0; j < len; j++) {
-            if (points[j].group != i) continue;
+            if ((pts+j)->group != i) continue;
             printf("%.3f %.3f c\n",
-                   (points[j].x - cx) * scale + W / 2,
-                   (points[j].y - cy) * scale + H / 2);
+                   ((pts+j)->x - cx) * scale + W / 2,
+                   ((pts+j)->y - cy) * scale + H / 2);
         }
         printf("\n0 setgray %g %g s\n",
-               (means[i].x - cx) * scale + W / 2,
-               (means[i].y - cy) * scale + H / 2);
+               ((cent+i)->x - cx) * scale + W / 2,
+               ((cent+i)->y - cy) * scale + H / 2);
     }
     printf("\n%%%%EOF");
     free(colors);
@@ -185,89 +188,58 @@ void print_eps(point_t *points, long len, point_t *means, long n_cluster) {
 /*
  * Lloyd's algorithm for resolving the k-means problem
  */
-void lloyd(point_t *points, point_t *means, long len, long numMeans) {
-    // struct timeval start, stop;
+point lloyd(point pts, long len, long n_cluster) {
     int i, j;
-    long changed;
-    // double count1 = 0, count2 = 0, count3 = 0, count4 = 0;
+    int changed;
+
+    point cent = malloc(sizeof(point_t) * n_cluster);
 
     /* assign init grouping randomly */
     for (j = 0; j < len; j++) {
-        points[j].group = j % (int) numMeans;
+        (pts+j)->group = j % (int) n_cluster;
     }
 
     /* or call k++ init */
-    // kpp(pts, len, means, numMeans);
+    // kpp(pts, len, cent, n_cluster);
 
-    // #pragma omp parallel num_threads(numCores) default(none) private(j, min_i, changed) shared(len, means, pts, numMeans, maxP)
+    //#pragma omp  num_threads(numCores) default(shared)
     do {
-        /*
-         * group element for centroids are used as counters
-         * Go through each mean and clear it
-         */
-        //gettimeofday(&start, NULL);
-        for (i = 0; i < numMeans; i++) {
-            means[i].group = 0;
-            means[i].x = means[i].y = 0;
+        /* group element for centroids are used as counters */
+        for (i = 0; i < n_cluster; i++) {
+            (cent+i)->group = 0;
+            (cent+i)->x = (cent+i)->y = 0;
         }
-        //gettimeofday(&stop, NULL);
-        //count1 += getTempo(start, stop);
 
-        /*
-         * Go through each point, go to it's assigned mean
-         * Increase mean group counter
-         * Add to x and y of the mean, the x and y of the point
-         */
-        //gettimeofday(&start, NULL);
-        // #pragma omp for
         for (j = 0; j < len; j++) {
-            means[points[i].group].group++;
-            means[points[i].group].x += points[i].x;
-            means[points[i].group].y += points[i].y;
+            (cent+(pts+j)->group)->group++;
+            (cent+(pts+j)->group)->x += (pts+j)->x;
+            (cent+(pts+j)->group)->y += (pts+j)->y;
         }
-        //gettimeofday(&stop, NULL);
-        //count2 += getTempo(start, stop);
 
-        /*
-         * Go through each mean and divide the position my the number of assignees
-         * This will reposition the mean based on all of their assignees
-         */
-        //gettimeofday(&start, NULL);
-        for (i = 0; i < numMeans; i++) {
-            means[i].x /= means[i].group;
-            means[i].y /= means[i].group;
+        for (i = 0; i < n_cluster; i++) {
+            (cent+i)->x /= (cent+i)->group;
+            (cent+i)->y /= (cent+i)->group;
         }
-        //gettimeofday(&stop, NULL);
-        //count3 += getTempo(start, stop);
 
-
-        /*
-         * Go through each point and find its nearest mean
-         * If different that previous, change it and increase counter
-         */
-        //gettimeofday(&start, NULL);
         changed = 0;
-        // #pragma omp parallel for num_threads(numCores) default(none) private(j, k, p, c) shared(len, means, pts)
-        for (j = 0; j < len; j++) {
-            int min_i = nearest(points, means, numMeans, 0);
-            if (min_i != points[j].group) {
-                changed++;
-                points[j].group = min_i;
-            }
-        }
-        //gettimeofday(&stop, NULL);
-        //count4 += getTempo(start, stop);
-    } while (changed > (len >> 10)); /* stop when 99.9% of points are good */
-    //printf("%lf // %lf // %lf // %lf \n", count1, count2, count3, count4);
 
-    for (i = 0; i < numMeans; i++) {
-        means[i].group = i;
+        /* find closest centroid of each point */
+        #pragma omp parallel for private(j) reduction(+:changed)
+        for (j = 0; j < len; j++) {
+            changed += nearest((pts+j), cent, n_cluster, 0);
+        }
+    } while (changed > (len >> 10)); /* stop when 99.9% of points are good */
+
+    for (i = 0; i < n_cluster; i++) {
+        (cent+i)->group = i;
     }
+
+    return cent;
 }
 
 double getTempo(struct timeval start, struct timeval stop){
-    double t = (((double) (stop.tv_sec) * 1000.0 + stop.tv_usec / 1000.0) - \
-                   ((double)(start.tv_sec)*1000.0 + start.tv_usec / 1000.0));
+    double t = (((double)(stop.tv_sec)*1000.0  + (double)(stop.tv_usec / 1000.0)) - \
+                   ((double)(start.tv_sec)*1000.0 + (double)(start.tv_usec / 1000.0)));
     return (t);
 }
 
@@ -277,33 +249,26 @@ void tempo(struct timeval start, struct timeval stop){
 
 int main(int argc, char *argv[]) {
     struct timeval start, stop;
-    // int i;
 
     long numPoints = strtol(argv[1], NULL, 10);
     long radius = strtol(argv[2], NULL, 10);
     long numMeans = strtol(argv[3], NULL, 10);
-    numCores = 4;
+    numCores = 2;
 
-    point_t *means;
-    means = (point_t *) malloc(numMeans * sizeof(point_t));
-
-    point_t *points;
-    points = (point_t *) malloc(numPoints * sizeof(point_t));
+    int time = 0;
+    int gen = 0;
 
     gettimeofday(&start, NULL);
-    gen_xy(points, numPoints, radius, numMeans);
+    point v = gen_xy(numPoints, radius, numMeans);
     gettimeofday(&stop, NULL);
-    //fprintf(stdout, "Generation time: ");
-    //tempo(start, stop);
+    if (time && gen) fprintf(stdout, "Generation time: %lf\n", getTempo(start, stop));
 
     gettimeofday(&start, NULL);
-    lloyd(points, means, numPoints, numMeans);
+    point c = lloyd(v, numPoints, numMeans);
     gettimeofday(&stop, NULL);
-    //fprintf(stdout, "Classification time: ");
-    //tempo(start, stop);
+    if (time) fprintf(stdout, "Classification time: %lf\n", getTempo(start, stop));
 
-    print_eps(points, numPoints, means, numMeans);
+    if (!time) print_eps(v, numPoints, c, numMeans);
 
     return 0;
 }
-
