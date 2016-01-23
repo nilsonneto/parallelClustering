@@ -257,17 +257,24 @@ int main(int argc, char *argv[]) {
     long radius = strtol(argv[2], NULL, 10);
     long numMeans = strtol(argv[3], NULL, 10);
 
+    int i = 0;
+
     gettimeofday(&start, NULL);
     point v = gen_xy(numPoints, radius, numMeans);
     gettimeofday(&stop, NULL);
-    fprintf(stdout, "Generation time: ");
-    tempo(start, stop);
+    //fprintf(stdout, "Generation time: ");
+    //tempo(start, stop);
 
     gettimeofday(&start, NULL);
     point c = lloyd(v, numPoints, numMeans);
     gettimeofday(&stop, NULL);
     fprintf(stdout, "Classification time: ");
     tempo(start, stop);
+
+    for (i=0;i<numPoints;i++){
+	// printf("%lf, %lf, %d\n", v->x, v->y, v->group);
+	//v++;
+    }
 
     // print_eps(v, numPoints, c, numMeans);
 
