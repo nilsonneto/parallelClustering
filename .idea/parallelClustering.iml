@@ -7,7 +7,6 @@
       <sourceFolder url="file://$MODULE_DIR$/kmeans.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/kmeans-parallel.c" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/em.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/kmeans-gen.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/kmeans.c" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/em.c" isTestSource="false" />
     </content>

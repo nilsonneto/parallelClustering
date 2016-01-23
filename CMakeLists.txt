@@ -9,9 +9,9 @@ else()
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 endif()
 
-set(SOURCE_FILES main.c em.c kmeans.c kmeans-parallel.c kmeans-gen.h)
-set(SOURCE_K kmeans.c kmeans-gen.h)
-set(SOURCE_KP kmeans-parallel.c kmeans-gen.h)
+set(SOURCE_FILES main.c em.c kmeans.c kmeans-parallel.c)
+set(SOURCE_K kmeans.c)
+set(SOURCE_KP kmeans-parallel.c)
 set(SOURCE_EM em.c)
 
 add_executable(parallelClustering ${SOURCE_FILES})

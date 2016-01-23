@@ -3,7 +3,7 @@ CC  := gcc
 CFLAGS  := -O3 -fopenmp
 LDFLAGS := -pthread -lm
 
-TARGET = kmeansp kmeans kmeanso
+TARGET = kmeansp kmeans
 
 SOURCE_FILES = main.c em.c kmeans-parallel.c
 SOURCE_K = kmeans.c
