@@ -1,8 +1,0 @@
-//
-// Created by nilsonneto on 1/14/16.
-//
-
-#ifndef PARALLELCLUSTERING_COMMON_H
-#define PARALLELCLUSTERING_COMMON_H
-
-#endif //PARALLELCLUSTERING_COMMON_H

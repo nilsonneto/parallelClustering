@@ -14,23 +14,34 @@
     </ADDITIONAL_GENERATION_ENVIRONMENT>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a56eb012-ae6d-4508-949b-4f791ae6ad34" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/thispar.eps" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/thisseq.eps" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/blobloblok.eps" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/blue.eps" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/held.eps" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/isthis.eps" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/real.eps" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/testp.eps" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/true.eps" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/burn.eps" afterPath="$PROJECT_DIR$/burn.eps" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/kmeans" afterPath="$PROJECT_DIR$/kmeans" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/kmeansp" afterPath="$PROJECT_DIR$/kmeansp" />
+    <list default="true" id="a56eb012-ae6d-4508-949b-4f791ae6ad34" name="Default" comment="kMeans parallelized, for real">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/blobloblok.eps" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/blue.eps" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/burn.eps" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/common.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/em-reserva.c" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/go" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/held.eps" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/isthis.eps" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/kmeans" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/kmeans-gen.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/kmeans.or.c" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/kmeanso" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/kmeansp" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/or.x" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/par.eps" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/real.eps" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/seq.eps" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/seq.grp.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test1" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test2" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/test3" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/testp.eps" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/thispar.eps" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/thisseq.eps" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/true.eps" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/un.txt" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/kmeans-parallel.c" afterPath="$PROJECT_DIR$/kmeans-parallel.c" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/kmeans.c" afterPath="$PROJECT_DIR$/kmeans.c" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/kmeans.h" afterPath="$PROJECT_DIR$/kmeans.h" />
     </list>
     <ignored path="parallelClustering.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -66,8 +77,8 @@
       <file leaf-file-name="kmeans.c" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/kmeans.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.031539887">
-              <caret line="252" column="34" selection-start-line="252" selection-start-column="34" selection-end-line="252" selection-end-column="34" />
+            <state vertical-scroll-proportion="0.49907234">
+              <caret line="266" column="0" selection-start-line="266" selection-start-column="0" selection-end-line="266" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -340,7 +351,13 @@
       <option name="project" value="LOCAL" />
       <updated>1453415910719</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="kMeans parallelized, for real">
+      <created>1453578725093</created>
+      <option name="number" value="00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1453578725093</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -382,7 +399,8 @@
     <MESSAGE value="initial planning" />
     <MESSAGE value="kMeans parallelized" />
     <MESSAGE value="kMeans not parallelized" />
-    <option name="LAST_COMMIT_MESSAGE" value="kMeans not parallelized" />
+    <MESSAGE value="kMeans parallelized, for real" />
+    <option name="LAST_COMMIT_MESSAGE" value="kMeans parallelized, for real" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -396,16 +414,6 @@
     </watches-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/kmeans-gen.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="8" column="19" selection-start-line="8" selection-start-column="19" selection-end-line="8" selection-end-column="19" />
-          <folding>
-            <element signature="e#44#62#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -446,16 +454,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/kmeans-gen.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="8" column="19" selection-start-line="8" selection-start-column="19" selection-end-line="8" selection-end-column="19" />
-          <folding>
-            <element signature="e#44#62#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -480,13 +478,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/common.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/kmeans.h">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -523,13 +514,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/em.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/common.h">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
@@ -578,13 +562,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/common.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/kmeans.h">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -627,31 +604,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/common.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/kmeans.h">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/common.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/em-reserva.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.9537275">
-          <caret line="184" column="1" selection-start-line="184" selection-start-column="1" selection-end-line="184" selection-end-column="1" />
         </state>
       </provider>
     </entry>
@@ -711,36 +667,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/kmeans-gen.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.03409091">
-          <caret line="8" column="19" selection-start-line="8" selection-start-column="19" selection-end-line="8" selection-end-column="19" />
-          <folding>
-            <element signature="e#44#62#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Makefile">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.14772727">
           <caret line="9" column="0" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/blobloblok.eps">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="62806" column="17" selection-start-line="62806" selection-start-column="17" selection-end-line="62806" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/testp.eps">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-3333.1333">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -772,8 +702,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/kmeans.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.031539887">
-          <caret line="252" column="34" selection-start-line="252" selection-start-column="34" selection-end-line="252" selection-end-column="34" />
+        <state vertical-scroll-proportion="0.49907234">
+          <caret line="266" column="0" selection-start-line="266" selection-start-column="0" selection-end-line="266" selection-end-column="0" />
           <folding />
         </state>
       </provider>
