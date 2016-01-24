@@ -250,80 +250,37 @@ void tempo(struct timeval start, struct timeval stop){
 int main(int argc, char *argv[]) {
     struct timeval start, stop;
     long numPoints, radius, numMeans;
+    FILE *fp;
 
-    numCores = 2;
+    fp=fopen("~/parallelClustering/parallel.csv", "w+");
 
     printf("Threads,Points,Radius,Means,GenTime,ClassTime\n");
+    fprintf(fp, "Threads,Points,Radius,Means,GenTime,ClassTime\n");
 
-    for(numPoints = 10; numPoints <= 1000000; numPoints *= 10){
-        for(radius = 5; radius <= 500 && radius <= numPoints; radius *= 10){
-            for(numMeans = 5; numMeans <= 500 && numMeans <= numPoints; numMeans *= 10){
-                printf("%d,%ld,%ld,%ld,", numCores, numPoints, radius, numMeans);
+    for(numCores = 2; numCores <= 8; numCores *= 2){
+        for(numPoints = 10; numPoints <= 1000000; numPoints *= 10){
+            for(radius = 5; radius <= 500 && radius <= numPoints; radius *= 10){
+                for(numMeans = 5; numMeans <= 500 && numMeans <= numPoints; numMeans *= 10){
+                    printf("%d,%ld,%ld,%ld,", numCores, numPoints, radius, numMeans);
+                    fprintf(fp, "%d,%ld,%ld,%ld,", numCores, numPoints, radius, numMeans);
 
-                int time = 1;
-                int gen = 1;
+                    int time = 1;
+                    int gen = 1;
 
-                gettimeofday(&start, NULL);
-                point v = gen_xy(numPoints, radius, numMeans);
-                gettimeofday(&stop, NULL);
-                if (time && gen) fprintf(stdout, "%lf,", getTempo(start, stop));
+                    gettimeofday(&start, NULL);
+                    point v = gen_xy(numPoints, radius, numMeans);
+                    gettimeofday(&stop, NULL);
+                    if (time && gen) fprintf(stdout, "%lf,", getTempo(start, stop));
+                    fprintf(fp, "%lf,", getTempo(start, stop));
 
-                gettimeofday(&start, NULL);
-                point c = lloyd(v, numPoints, numMeans);
-                gettimeofday(&stop, NULL);
-                if (time) fprintf(stdout, "%lf\n", getTempo(start, stop));
+                    gettimeofday(&start, NULL);
+                    point c = lloyd(v, numPoints, numMeans);
+                    gettimeofday(&stop, NULL);
+                    if (time) fprintf(stdout, "%lf\n", getTempo(start, stop));
+                    fprintf(fp, "%lf\n", getTempo(start, stop));
 
-                if (!time) print_eps(v, numPoints, c, numMeans);
-            }
-        }
-    }
-
-    numCores = 4;
-
-    for(numPoints = 10; numPoints <= 1000000; numPoints *= 10){
-        for(radius = 5; radius <= 500 && radius <= numPoints; radius *= 10){
-            for(numMeans = 5; numMeans <= 500 && numMeans <= numPoints; numMeans *= 10){
-                printf("%d,%ld,%ld,%ld,", numCores, numPoints, radius, numMeans);
-
-                int time = 1;
-                int gen = 1;
-
-                gettimeofday(&start, NULL);
-                point v = gen_xy(numPoints, radius, numMeans);
-                gettimeofday(&stop, NULL);
-                if (time && gen) fprintf(stdout, "%lf,", getTempo(start, stop));
-
-                gettimeofday(&start, NULL);
-                point c = lloyd(v, numPoints, numMeans);
-                gettimeofday(&stop, NULL);
-                if (time) fprintf(stdout, "%lf\n", getTempo(start, stop));
-
-                if (!time) print_eps(v, numPoints, c, numMeans);
-            }
-        }
-    }
-
-    numCores = 8;
-
-    for(numPoints = 10; numPoints <= 1000000; numPoints *= 10){
-        for(radius = 5; radius <= 500 && radius <= numPoints; radius *= 10){
-            for(numMeans = 5; numMeans <= 500 && numMeans <= numPoints; numMeans *= 10){
-                printf("%d,%ld,%ld,%ld,", numCores, numPoints, radius, numMeans);
-
-                int time = 1;
-                int gen = 1;
-
-                gettimeofday(&start, NULL);
-                point v = gen_xy(numPoints, radius, numMeans);
-                gettimeofday(&stop, NULL);
-                if (time && gen) fprintf(stdout, "%lf,", getTempo(start, stop));
-
-                gettimeofday(&start, NULL);
-                point c = lloyd(v, numPoints, numMeans);
-                gettimeofday(&stop, NULL);
-                if (time) fprintf(stdout, "%lf\n", getTempo(start, stop));
-
-                if (!time) print_eps(v, numPoints, c, numMeans);
+                    if (!time) print_eps(v, numPoints, c, numMeans);
+                }
             }
         }
     }

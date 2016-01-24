@@ -253,13 +253,19 @@ void tempo(struct timeval start, struct timeval stop){
 int main(int argc, char *argv[]) {
     struct timeval start, stop;
     long numPoints, radius, numMeans;
+    FILE *fp;
+
+    fp=fopen("~/parallelClustering/serial.csv", "w+");
+
 
     printf("Threads,Points,Radius,Means,GenTime,ClassTime\n");
+    fprintf(fp, "Threads,Points,Radius,Means,GenTime,ClassTime\n");
 
     for(numPoints = 10; numPoints <= 1000000; numPoints *= 10){
         for(radius = 5; radius <= 500 && radius <= numPoints; radius *= 10){
             for(numMeans = 5; numMeans <= 500 && numMeans <= numPoints; numMeans *= 10){
                 printf("1,%ld,%ld,%ld,", numPoints, radius, numMeans);
+                fprintf(fp, "1,%ld,%ld,%ld,", numPoints, radius, numMeans);
 
                 int time = 1;
                 int gen = 1;
@@ -268,11 +274,13 @@ int main(int argc, char *argv[]) {
                 point v = gen_xy(numPoints, radius, numMeans);
                 gettimeofday(&stop, NULL);
                 if (time && gen) fprintf(stdout, "%lf,", getTempo(start, stop));
+                fprintf(fp, "%lf,", getTempo(start, stop));
 
                 gettimeofday(&start, NULL);
                 point c = lloyd(v, numPoints, numMeans);
                 gettimeofday(&stop, NULL);
                 if (time) fprintf(stdout, "%lf\n", getTempo(start, stop));
+                fprintf(fp, "%lf\n", getTempo(start, stop));
 
                 if (!time) print_eps(v, numPoints, c, numMeans);
             }
