@@ -252,25 +252,32 @@ void tempo(struct timeval start, struct timeval stop){
 
 int main(int argc, char *argv[]) {
     struct timeval start, stop;
+    long numPoints, radius, numMeans;
 
-    long numPoints = strtol(argv[1], NULL, 10);
-    long radius = strtol(argv[2], NULL, 10);
-    long numMeans = strtol(argv[3], NULL, 10);
+    printf("Threads,Points,Radius,Means,GenTime,ClassTime\n");
 
-    int time = 0;
-    int gen = 0;
+    for(numPoints = 10; numPoints <= 1000000; numPoints *= 10){
+        for(radius = 5; radius <= 500 && radius <= numPoints; radius *= 10){
+            for(numMeans = 5; numMeans <= 500 && numMeans <= numPoints; numMeans *= 10){
+                printf("1,%ld,%ld,%ld,", numPoints, radius, numMeans);
 
-    gettimeofday(&start, NULL);
-    point v = gen_xy(numPoints, radius, numMeans);
-    gettimeofday(&stop, NULL);
-    if (time && gen) fprintf(stdout, "Generation time: %lf\n", getTempo(start, stop));
+                int time = 1;
+                int gen = 1;
 
-    gettimeofday(&start, NULL);
-    point c = lloyd(v, numPoints, numMeans);
-    gettimeofday(&stop, NULL);
-    if (time) fprintf(stdout, "Classification time: %lf\n", getTempo(start, stop));
+                gettimeofday(&start, NULL);
+                point v = gen_xy(numPoints, radius, numMeans);
+                gettimeofday(&stop, NULL);
+                if (time && gen) fprintf(stdout, "%lf,", getTempo(start, stop));
 
-    if (!time) print_eps(v, numPoints, c, numMeans);
+                gettimeofday(&start, NULL);
+                point c = lloyd(v, numPoints, numMeans);
+                gettimeofday(&stop, NULL);
+                if (time) fprintf(stdout, "%lf\n", getTempo(start, stop));
+
+                if (!time) print_eps(v, numPoints, c, numMeans);
+            }
+        }
+    }
 
     return 0;
 }
