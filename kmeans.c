@@ -255,15 +255,18 @@ int main(int argc, char *argv[]) {
     long numPoints, radius, numMeans;
     FILE *fp;
 
-    fp=fopen("~/parallelClustering/serial.csv", "w+");
-
+    fp=fopen("serial.csv", "a");
 
     printf("Threads,Points,Radius,Means,GenTime,ClassTime\n");
     fprintf(fp, "Threads,Points,Radius,Means,GenTime,ClassTime\n");
 
+    fclose(fp);
+
     for(numPoints = 10; numPoints <= 1000000; numPoints *= 10){
         for(radius = 5; radius <= 500 && radius <= numPoints; radius *= 10){
             for(numMeans = 5; numMeans <= 500 && numMeans <= numPoints; numMeans *= 10){
+                fp=fopen("serial.csv", "a");
+
                 printf("1,%ld,%ld,%ld,", numPoints, radius, numMeans);
                 fprintf(fp, "1,%ld,%ld,%ld,", numPoints, radius, numMeans);
 
@@ -283,6 +286,8 @@ int main(int argc, char *argv[]) {
                 fprintf(fp, "%lf\n", getTempo(start, stop));
 
                 if (!time) print_eps(v, numPoints, c, numMeans);
+
+                fclose(fp);
             }
         }
     }
